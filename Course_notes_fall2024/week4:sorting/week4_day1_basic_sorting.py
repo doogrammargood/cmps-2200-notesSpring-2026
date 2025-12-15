@@ -1,4 +1,8 @@
 import random
+#This file contains Python implementations of the three basic sorting algorithms:
+#   Bubble Sort
+#   Selection Sort
+#   Insertion Sort
 #copied from https://www.geeksforgeeks.org/comparison-among-bubble-sort-selection-sort-and-insertion-sort/
 def bubble_sort(arr):
     n = len(arr)
@@ -26,12 +30,13 @@ def insertion_sort(arr):
             j -= 1
         arr[j + 1] = key
 
+#---Timing the basic sorting algorithms---#
+
 # Generate a list of 10000 random integers
 arr = [random.randint(1, 10000) for i in range(10000)]
 
-# Sort the list using each algorithm and time it
-import time
 
+# Sort the list using each algorithm and time it
 start_time = time.time()
 bubble_sort(arr.copy())
 bubble_sort_time = time.time() - start_time
