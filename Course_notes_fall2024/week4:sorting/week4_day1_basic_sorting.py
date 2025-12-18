@@ -1,4 +1,5 @@
 import random
+import time
 #This file contains Python implementations of the three basic sorting algorithms:
 #   Bubble Sort
 #   Selection Sort
