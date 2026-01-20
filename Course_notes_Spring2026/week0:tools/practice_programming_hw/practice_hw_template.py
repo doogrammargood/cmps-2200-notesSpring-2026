@@ -1,5 +1,7 @@
-#This file contains a solution to a practice homework.
+#This file is a template for the practice homework.
 #This does not count towards credit for the class.
+
+#IMPORTANT: RENAME THIS FILE AS practice_hw.py FOR THE AUTOGRADER.
 
 #Purpose of this practice assignment:
 #   -To practice with key Python concepts: list comprehensions, and lambda expressions.

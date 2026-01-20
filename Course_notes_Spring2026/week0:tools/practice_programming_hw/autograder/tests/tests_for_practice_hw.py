@@ -1,3 +1,4 @@
+from unittest.mock import patch, call   
 from unittest import TestCase
 from practice_hw import *
 import unittest
@@ -28,8 +29,8 @@ class CreateTests(TestCase):
 
 
     @weight(10)
-    @number(3)
-    @visibility('visibile')
+    @number('3')
+    @visibility('visible')
     def test_matrix_to_function(self):
         test_cases = [(3,2),(5,4),(4,4)]
         for m,n in test_cases:
