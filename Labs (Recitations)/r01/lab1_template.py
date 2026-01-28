@@ -168,7 +168,7 @@ def get_results(max_n: int) -> list[tuple[str, str, str, int, int]]:
                 #TODO: append the information about the number of swaps to the results list. (1 line, similar to above.)
                 #TODO: reset the results counter. (1 line)
     return results
-def generate_plots(max_n: int, results: list[tuple[str, str, int, str, int]]) -> None:
+def generate_plots(max_n: int, results: list[tuple[str, str, str, int, int]]) -> None:
     '''
     Input: a list of tuples that are the output of get_results.
     Output: None
