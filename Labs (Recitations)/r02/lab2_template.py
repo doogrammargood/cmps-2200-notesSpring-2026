@@ -98,9 +98,9 @@ def merge_step(arr1: list[int], arr2: list[int]) -> list[int]:
     '''
     outputlist = []
     while len(arr1) * len(arr2) > 0:
-        comparison_value = compare(arr1, arr2)
+        comparison_value = compare(arr1[0], arr2[0])
         if comparison_value==-1: #arr1[0]<arr2[0]
-            outputlist.append(arr1.pop(0))
+            outputlist.append(arr1.pop(0)) #note that list.pop(0) is slow.
         else:
             #TODO: put the smallest element of arr2 onto the end of outputlist. (1 line)
             pass #remove this word pass. It serves to prevent a syntax error from the empty 'else' block.
@@ -127,7 +127,7 @@ def quicksort(arr: list[int]) -> list[int]:
     if len(arr) <= 1:
         return arr[:]
     
-    pivot_index = 0 #assume the zeroth is the pivot
+    pivot_index = 0 #assume the zeroth is the pivot. Intentionally naive.
     left = []
     middle = [arr[pivot_index]]
     right = []
