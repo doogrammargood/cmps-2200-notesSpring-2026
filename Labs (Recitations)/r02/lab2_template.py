@@ -12,6 +12,7 @@ Introduction:
 Goals:
     -To practice implementing quicksort and mergesort
     -To demonstrate the growth behaviors of the number of comparisons used.
+    -To see practical examples of asymptotic dominance
     -Programming:
         -To see how to fit a curve.
         -To practice Python list manipulations.
