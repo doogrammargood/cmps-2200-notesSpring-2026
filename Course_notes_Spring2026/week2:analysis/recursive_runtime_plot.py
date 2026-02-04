@@ -89,4 +89,4 @@ def create_ratio_plots():
     create_ratio_plot(1000,2,2,identity,lambda n: n*math.log2(n)) #balanced
     create_ratio_plot(1000,2,2,square, lambda n: n**2) #root dominated
 #create_plots()
-create_operation_count_plot(3000,2,2,identity,None) #leaf dominated
+create_operation_count_plot(1000,3,2,identity,lambda n: n**math.log2(3)) #leaf dominated

@@ -24,6 +24,7 @@ Gotchas:
     -Your algorithms should work correctly, even in the edge case that the list is empty.
     -You should not need to change your recursion_limit. If you hit that limit, something in your code is wrong.
     -Remember to use the custom compare() function each time you make a comparison. Also, don't call compare twice on the same inputs by accident.
+    -The merge step clears the input lists as a side effect.
     
 Format of this file:
 0.  Implement a compare function, that increments a counter each time the function is called. (Given)

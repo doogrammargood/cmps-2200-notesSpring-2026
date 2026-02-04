@@ -1,142 +1,208 @@
-from sympy import isprime #This will be more efficient than checking with python.
-import itertools
-import functools
-import random
+'''
+Lab 3.
+Rename this file as lab3_solution.py
 
-def first_r_primes(r):
-    #returns a list of the first r prime numbers.
-    i=0
+Introduction:
+    We have seen Karatsuba's Algorithm, which is a divide-and-conquer algorithm for implementing multiplication.
+    In this lab, we will implement an alternative to Karatsuba's Algorithm based on the Chinese Remainder Theorem.
+    The idea is to represent integers by a list of their residues modulo p, where p runs over the first r primes.
+    This allows us to represent all integers between 0 and the product of the first r primes.
+    The representation allows us to perform addition and multiplication element-wise.
+    We also implement exponentiation and subtraction.
+    Finally, we implement converting from the ModularInt representation to the usual integer representation.
+    The details of this conversion are written in Knuth's The Art of Computer Programming, page 290.
+        We will see that good algorithms can depend on the data structures available. 
+        In this case, multiplication can be performed quickly in the ModularInt representation.
+Goals:
+    -Theoretical goals:
+        -To practice implementing common numerical algorithms:
+            -The Extended Euclidean Algorithm.
+            -Exponentiation by repeated squaring.
+            -To see an example where the availability of good algorithms depends on the format of the data.
+        -To see an example of the Chinese Remainder Theorem can be useful. It is important in the representation of ModularInt.
+        -To see examples of how code can be used to check itself.
+    -Skill goals:
+        -To practice reading and implementing a textbook algorithm, converting from the ModularInt representation to the usual int representation.
+    -Python goals:
+        -To understand the organization of object-oriented Python code.
+        -To see examples where class methods achieve polymorphic initialization.
+        -To practice with dunder methods.
+Gotchas:
+    -Remember to rename this file as lab3_solution.py
+    -Remember that you can remove mentions of gradescope in tests_for_lab3.py if it stops the code from running.
+    -We don't actually need to know Karatsuba's Algorithm for this lab.
+    -ModularInts are only defined modulo the product of the first r primes. Exponentiating too much can cause overflow.
+    -You're supposed to use cls in classmethods instead of the name of the class. This won't actually cause an error.
+    -Implement methods like __repr__ first so that you can see what you're doing with print statements.
+Format of this file:
+0. Implement number-theoretic functions to get the first few primes (Given)
+1. Implement the extended euclidean algorithm.
+2. Complete the ModularInt class, filling in magic methods.
+3. The integer typecasting method of ModularInt will require you to follow the instructions given in Knuth's book.
+
+Fill in every instance of #TODO (except this <- ) with code that accomplishes the task. 
+See tests_for_lab3.py for tests.
+'''
+
+from sympy import isprime
+import functools
+
+def first_r_primes(r: int) -> list[int]:
+    '''
+    Input: an integer r.
+    Output: a list of the first r prime numbers.
+    '''
+    i=2
     primes = []
-    while len(primes)<r:
+    while len(primes) < r:
         if isprime(i):
             primes.append(i)
-        i+=1
+        i += 1
     return primes
 
-def extended_euclidean(a, b): #From ChatGPT
-    # Returns GCD, x, y such that ax + by = GCD
-    # Base case
-    if b == 0:
-        return a, 1, 0  # gcd(a, 0) = a, and the coefficients are (1, 0)
-
+def extended_euclidean(a: int, b: int) -> tuple[int, int, int]:
+    '''
+    Input: integers a and b.
+    Output: a triple: GCD, x, y such that ax + by = GCD. Here, GCD is the greatest common divisor of a and b.
+    Side-Effects: None
+    '''
+    #TODO: detect base case and return something (2 lines)
+    
     # Recursive call
     gcd, x1, y1 = extended_euclidean(b, a % b)
 
-    # Update x and y using the results from the recursion
-    x = y1
-    y = x1 - (a // b) * y1
+    #TODO: Update x and y using the results from the recursion. Return something. (~3 lines)
+    pass
 
-    return gcd, x, y
-
-class modular_int(object):
-    #We are going to store integers as lists, [u_0,u_1,...,u_{r-1}]
-    #This list represents the number x that satisfies $x=u_i %p_i, where p_i is the ith prime. u_i should be in [0,1,2,...,p_i-1].
-    #Each instance of this class contains 
-    # self.modular_rep . . . . . The list [u_0,...u_{r-1}]
-    # self.r . . . . . . . . . . The number of primes used, also the length of self.modular_rep
-    # self.primes_list . . . . . A list of the first r primes.
+class ModularInt(object):
+    '''
+    We are going to store integers as lists, [u_0, u_1, ..., u_{r-1}]
+    This list represents the number x that satisfies x = u_i % p_i, where p_i is the ith prime.
+    Each instance of this class contains the attributes
+    self.modular_rep . . . . . The list [u_0, u_1, ..., u_{r-1}]
+    self.r . . . . . . . . . . The number of primes used, also the length of self.modular_rep
+    self.primes_list . . . . . A list of the first r primes.
+    '''
    
-    @classmethod #See https://pynative.com/python-class-method/
-    def create_modular_int_from_value(cls,value,r=10):
-        #takes an integer value, returns a modular_int.
-        #TODO: Get the list [u_0,u_1,...,u_{r-1}] based on value. Feed it and r into the constructor for modular_int.
+    @classmethod #Class methods are methods that are attached to classes instead of instances. See https://pynative.com/python-class-method/
+    def create_ModularInt_from_value(cls, value: int, r: int = 10) -> "ModularInt":
+        '''
+        Input: value, an integer that we will represent by a ModularInt.
+                r, the number of primes to use to represent the value.
+                Assume that value is between 0 and the product of the first r primes.
+        Output: a ModularInt
+        '''
+        #TODO: return something (1 line)
         pass
+    
     @classmethod
-    def modular_int_zero(cls,r): #The modular int zero
-        return modular_int([0]*r, r)
+    def ModularInt_zero(cls,r): 
+        '''Returns the ModularInt representing zero'''
+        return cls([0]*r, r)
+    
     @classmethod
-    def modular_int_one(cls,r): #The modular int one.
-        return modular_int([1]*r, r)
+    def ModularInt_one(cls, r): 
+        '''Returns the ModularInt representing one.'''
+        return cls([1]*r, r)
 
-    def __init__(self, modular_rep, r):
+    #DUNDER METHODS aka MAGIC METHODS are methods surrounded by double underscores. 
+    #They have special significance in Python.
+    def __init__(self, modular_rep: list[int], r: int) -> None:
+        '''
+        The dunder __init__ method creates an instance of a ModularInt.
+        Input: modular_rep (the list of integers in the Chinese Remainder Theorem representation)
+        '''
         #initializes from a list [u_0,u_1,...,u_{r-1}]
-        self.r= len(modular_rep)
+        assert r == len(modular_rep) #checks consistency of r with modular_rep
+        self.r = r
         self.modular_rep = modular_rep
         self.primes_list = first_r_primes(r)
+    
     def __repr__(self) -> str:
-        return str(self.modular_rep)
-    def __eq__(self,other):
+        '''
+        The dunder __repr__ method allows you to use the print() function to inspect objects.
+        Input: None
+        Output: str
+        Side-Effects: None
+        '''
+        #TODO: return something. (1 line.)
+        pass
+    
+    def __eq__(self, other: "ModularInt") -> bool:
+        '''
+        The dunder __eq__ method allows you to check equality of objects using ==.
+        Input: other is a ModularInt that you want to compare self to.
+        Output: True or False, depending on whether self represents the same or different value that other.
+        Side-Effects: None
+        '''
         if self.r != other.r:
             return False
         else:
-            return all([self_ui==other_ui for self_ui,other_ui in zip(self.modular_rep,other.modular_rep)])
-    def __add__(self,other):
-        #implements addition.
-        assert self.r==other.r #We assume the numbers have the same r.
-        new_modular_rep = [(self_ui + other_ui)%p for self_ui, other_ui,p in zip(self.modular_rep, other.modular_rep,self.primes_list)]
-        return modular_int(new_modular_rep, self.r)
-    def __neg__(self):
-        #negates the modular representation
-        #TODO
-        pass
-    def __sub__(self,other):
-        return self + (-other)
-    def __mul__(self,other):
-        #implements multiplication.
-        assert self.r==other.r
-        #TODO: Implement multiplication. Similar to addition.
-        pass
-    def __pow__(self,other):
-        #Assume other is a natural number.
-        #TODO implement exponents using multiplication and repeated squaring.
-        #Don't refer to self.modular_rep or other.modular_rep in this function.
-        #Hint: you can write the function recursively.
-        pass
-
-    def __int__(self):
-        #Done. Following Knuth's notation on page 290 of TAOCP.
-        c=[[0 for _ in range(self.r)] for _ in range(self.r)]#create a blank self.r x self.r matrix.
-        v = [0]*self.r #creates a blank vector v
-        u = self.modular_rep
-        for i in range(self.r):
-            for j in range(self.r):
-                c[i][j]=extended_euclidean(self.primes_list[i],self.primes_list[j])[1]
-        for k in range(self.r):
-            current = u[k]
-            for h in range(k):
-                current = (current - v[h])%self.primes_list[k]
-                current = (current * c[h][k])%self.primes_list[k]
-            v[k]=current%self.primes_list[k]
-        to_return = 0
-        for k in range(self.r):
-            to_return += v[k]*functools.reduce(lambda a,b: a*b,self.primes_list[:k],1)#https://www.geeksforgeeks.org/reduce-in-python/
-        return to_return
+            return all([self_ui == other_ui for self_ui,other_ui in zip(self.modular_rep,other.modular_rep)])
     
-def test_addition(r_vals,values):
-    for r_val in r_vals:
-        for a,b in itertools.combinations(values,2):
-            assert a+b == int(modular_int.create_modular_int_from_value(a,r_val) + modular_int.create_modular_int_from_value(b,r_val)) 
-
-def test_multiplication(r_vals,values):
-    for r_val in r_vals:
-        for a,b in itertools.combinations(values,2):
-            assert a*b == int(modular_int.create_modular_int_from_value(a,r_val) * modular_int.create_modular_int_from_value(b,r_val)) 
-
-def test_powers(r_vals,values):
-    for r_val in r_vals:
-        for a in values:
-            for b in [0,1,2,3,5,7]:
-                if r_val >2*b:#if r isn't big enough
-                    assert a**b == int(modular_int.create_modular_int_from_value(a,r_val) ** b) 
-
-def test_multiplication_self_test(r_vals,values):
-    #Uses self-testing to check multiplication, assuming addition works.
-    for r in r_vals:
-        for a,b in itertools.combinations(values,2):
-            a1 = random.randint(0,functools.reduce(lambda a,b:a*b, first_r_primes(r)))
-            a2 = a - a1
-            b1 = random.randint(0,functools.reduce(lambda a,b:a*b, first_r_primes(r)))
-            b2 = b - b1
-            a_mod,b_mod = modular_int.create_modular_int_from_value(a,r), modular_int.create_modular_int_from_value(b,r)
-            a1_mod,a2_mod = modular_int.create_modular_int_from_value(a1,r), modular_int.create_modular_int_from_value(a2,r)
-            b1_mod,b2_mod =  modular_int.create_modular_int_from_value(b1,r),modular_int.create_modular_int_from_value(b2,r)
-            #TODO: What's the correct assertion to make here?
-
-if __name__ == '__main__':
-    r_vals = [10, 15, 20, 40, 50]
-    values = [1,2,3,6,7,10,15,100,123]  
-    test_addition(r_vals,values)
-    test_multiplication(r_vals,values)
-    test_multiplication_self_test(r_vals,values)
-    test_powers(r_vals,values)
-    print("tests passed")
+    def __add__(self, other: "ModularInt") -> "ModularInt":
+        '''
+        The dunder __add__ method allows you to add objects using +
+        Input: other is a ModularInt
+        Output: A ModularInt that represents the sum of self and other.
+        Side-Effects: None
+        '''
+        assert self.r == other.r #We assume the numbers have the same r.
+        #TODO: create a list, new_modular_rep, that represents the sum of self and other. Return something (~2 lines)
+        pass    
+    def __neg__(self) -> "ModularInt":
+        '''
+        The dunder __neg__ method allows you to negate an object using -
+        Input: None
+        Output: a ModularInt
+        Side-Effects: None
+        '''
+        return ModularInt([(-ui)%p for ui,p in zip(self.modular_rep,self.primes_list) ],self.r)
+    
+    def __sub__(self, other: "ModularInt") -> "ModularInt":
+        '''
+        The dunder __sub__ method allows you to subtract objects using -
+        Input: other is a modular int.
+        Output: a ModularInt representing the difference self - other
+        Side-Effects: None
+        '''
+        return self + (-other)
+    
+    def __mul__(self, other: "ModularInt") -> "ModularInt":
+        '''
+        The dunder method __mul__ allows you to multiply using *
+        Input: other
+        Output: A ModularInt representing the product self * other
+        Side-Effects: None
+        Note: This is a quick alternative to Karatsuba's algorithm, assuming the ModularInt representation of integers.
+        '''
+        assert self.r == other.r
+        #TODO: define the product of self and other. 
+        #First create a list. Use the list to define a ModularInt. 
+        #Return the modularint (~2 lines.)
+        pass
+    
+    def __pow__(self, other: int) -> "ModularInt":
+        '''
+        The dunder __pow__ method allows you to exponentiate using **
+        Input: other is a non-negative integer.
+        Output: A modular int representing self ** other
+        '''
+        assert isinstance(other, int) #We are only implementing positive integer powers.
+        assert other >= 0
+        if other == 1:
+            return ModularInt(self.modular_rep,self.r)
+        elif other == 0:
+            return ModularInt.ModularInt_one(self.r)
+        #TODO: Complete the power function by repeated squaring. (~7 lines)
+    
+    def __int__(self) -> int:
+        '''
+        This function allows you to convert a ModularInt to 
+                the integer between 0 and the product of the 
+                first self.r primes that represents it.
+        Input: None
+        Output: an integer
+        '''
+        #TODO: Follow Knuth's recipe on page 290 of TAOCP. (~15 lines)
+        pass
