@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Set up autograder files
+
+cp /autograder/submission/lab4_sudoku_solution.py /autograder/source/lab4_sudoku_solution.py
+cp /autograder/submission/lab4_cliques_solution.py /autograder/source/lab4_cliques_solution.py
+
+cd /autograder/source
+
+python3 run_tests.py
