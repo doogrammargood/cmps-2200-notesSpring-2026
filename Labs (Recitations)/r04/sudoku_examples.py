@@ -1,5 +1,8 @@
 #Sources:https://norvig.com/easy50.txt
 
+#This file contains examples of Sudoku puzzles. 
+#They all get converted into the standard doubly-nested list of integers for use in lab4_sudoku_template.py
+
 def to_list_format(puzzle: str) -> list[list[int]]:
     '''
     Returns the list format of a puzzle
@@ -51,7 +54,7 @@ easy_puzzle = [
 
     [9, 6, 1, 5, 3, 7, 2, 8, 4],
     [2, 8, 7, 4, 1, 9, 6, 3, 5],
-    [3, 4, 5, 2, 8, 6, 1, 0, 0]  # only 1 blank
+    [3, 4, 5, 2, 8, 6, 1, 0, 0]  # only 2 blank
 ]
 
 medium_puzzle = [
