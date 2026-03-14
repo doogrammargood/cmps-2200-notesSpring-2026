@@ -1,6 +1,34 @@
 #Sources:https://norvig.com/easy50.txt
 
-#This file contains examples of Sudoku puzzles. 
+#This file contains examples of Sudoku puzzles. It also contains a function to check whether a cell violates sudoku rules. It was copied from Lab4.
+def check_cell(board, r:int, c:int) -> bool:
+        '''
+        Input: r and c are indices of a cell. board is a doubly nested list of 1-9.
+        Output: True/False, depending on whether this cell violates any Sudoku rule.
+        '''
+        val = board[r][c]
+        if val == 0:
+            return True
+
+        # row
+        for j in range(9):
+            if j != c and board[r][j] == val:
+                return False
+
+        # column
+        for i in range(9):
+            if i != r and board[i][c] == val:
+                return False
+
+        # 3x3 box
+        br = (r // 3) * 3
+        bc = (c // 3) * 3
+        for i in range(br, br + 3):
+            for j in range(bc, bc + 3):
+                if (i != r or j != c) and board[i][j] == val:
+                    return False
+        return True
+
 #They all get converted into the standard doubly-nested list of integers for use in lab4_sudoku_template.py
 
 def to_list_format(puzzle: str) -> list[list[int]]:

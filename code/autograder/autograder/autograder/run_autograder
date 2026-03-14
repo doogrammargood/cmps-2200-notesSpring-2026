@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Set up autograder files
+
+cp /autograder/submission/dancing_links_solution.py /autograder/source/dancing_links_solution.py
+cp /autograder/submission/sudoku_via_dancing_links_solution.py /autograder/source/sudoku_via_dancing_links_solution.py
+
+cd /autograder/source
+
+python3 run_tests.py
