@@ -1,65 +1,66 @@
-#The pocket cube is a 2x2x2 variant of the Rubik's cube.
-#It is equivalent to just the corners of the Rubik's cube.
-#This file contains the code for our PocketCube class, which simulates the pocket cube.
+'''
+The pocket cube is a 2x2x2 variant of the Rubik's cube.
+It is equivalent to just the corners of the Rubik's cube.
+This file contains the code for our PocketCube class, which simulates the pocket cube.
 
-#The pocket cube consists of 8 "cubies." Each cubie can be oriented in any of 3 ways.
-#If we specify the orientation of 7 cubies, the last cubie's orientation is fixed.
-#This means that there are 8!x3^7=88,179,840 states.
-#You might see the claim that there are 3,674,160 states. This is because there are 24 orientations of the entire cube.
-#But we are not accounting for these 24 orientations in this assignment.
+The pocket cube consists of 8 "cubies." Each cubie can be oriented in any of 3 ways.
+If we specify the orientation of 7 cubies, the last cubie's orientation is fixed.
+This means that there are 8!x3^7=88,179,840 states.
+You might see the claim that there are 3,674,160 states. This is because there are 24 orientations of the entire cube.
+But we are not accounting for these 24 orientations in this assignment.
 
-#Further information can be found on Jaap's puzzle page: https://www.jaapsch.net/puzzles/cube2.htm
+Further information can be found on Jaap's puzzle page: https://www.jaapsch.net/puzzles/cube2.htm
 
-#The allowable moves consist of rotating a face of the cube clockwise 90, 180, or 270 degrees.
-#We denote the faces Front (F), Back(B), Right(R), Left(L), Up(U), Down(D). The notation is standard from David Singmaster's original notes on the Rubik's cube.
-#To denote a move, we name the face to turn, followed by a suffix.
-#If the face is alone, it is a 90 degree turn clockwise.
-#If the face is followed by "p" (for prime), we turn the face 270 degrees (or 90 degrees counterclockwise).
-#If the face is followed by "2", we turn the face 180 degrees. 
-#For example, "F" stands for rotating the front face clockwise.
-#"F2" stands for rotating the front face counterclockwise.
-#The method PocketCube.perform_move("F2") will simulated rotating the front face of the cube counterclockwise.
+The allowable moves consist of rotating a face of the cube clockwise 90, 180, or 270 degrees.
+We denote the faces Front (F), Back(B), Right(R), Left(L), Up(U), Down(D). The notation is standard from David Singmaster's original notes on the Rubik's cube.
+To denote a move, we name the face to turn, followed by a suffix.
+If the face is alone, it is a 90 degree turn clockwise.
+If the face is followed by "p" (for prime), we turn the face 270 degrees (or 90 degrees counterclockwise).
+If the face is followed by "2", we turn the face 180 degrees. 
+For example, "F" stands for rotating the front face clockwise.
+"F2" stands for rotating the front face counterclockwise.
+The method PocketCube.perform_move("F2") will simulated rotating the front face of the cube counterclockwise.
 
-#There are multiple ways to quantify the smallest solution to the solved cube from a given state.
-#Quarter Turn Metric (QTM): Each 90 degree or 270 degree turn counts as 1 move. A 180 degree turn counts as 2 moves.
-#Half Turn Metric (HTM): Each allowable move counts as 1 move
-#General metrics: (ALT):  Assume we empirically determine how long it takes to perform each move. 
-#                         Assume for simplicity that each move and its inverse take the same amount of time.
-#                         Assume the amount of time each move takes is independent of the previous and subsequent moves.)
-#It is claimed that the pocket cube can be solved from any state in 11 moves using HTM and 14 moves using QTM.
-#But we consider global orientation to be different, so for us it should take at most 15 moves using HTM and 22 using QTM.
+There are multiple ways to quantify the smallest solution to the solved cube from a given state.
+Quarter Turn Metric (QTM): Each 90 degree or 270 degree turn counts as 1 move. A 180 degree turn counts as 2 moves.
+Half Turn Metric (HTM): Each allowable move counts as 1 move
+General metrics: (ALT):  Assume we empirically determine how long it takes to perform each move. 
+                        Assume for simplicity that each move and its inverse take the same amount of time.
+                        Assume the amount of time each move takes is independent of the previous and subsequent moves.)
+It is claimed that the pocket cube can be solved from any state in 11 moves using HTM and 14 moves using QTM.
+But we consider global orientation to be different, so for us it should take at most 15 moves using HTM and 22 using QTM.
 
-#We will use Dijkstra's algorithm and Breadth First Search (BFS) to solve the pocket cube.
-#The number of states is too large to solve this directly, so we will need a greedy heuristic.
-#We will see that the A* algorithm can be fruitfully applied.
+We will use Dijkstra's algorithm and Breadth First Search (BFS) to solve the pocket cube.
+The number of states is too large to solve this directly, so we will need a greedy heuristic.
+We will see that the A* algorithm can be fruitfully applied.
 
-#To represent a state of the pocket cube, we will represent it by a list of length 24.
-#The numbers in the list represent the faces of the cubies according to the following diagram, drawn by ChatGPT.
-#
-#           +----+----+
-#           | 0  | 1  |
-#           +----+----+
-#           | 2  | 3  |
-# +----+----+----+----+----+----+----+----+
-# | 4  | 5  | 6  | 7  | 8  | 9  | 10 | 11 |
-# +----+----+----+----+----+----+----+----+
-# | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 |
-#           +----+----+
-#           | 20 | 21 |
-#           +----+----+
-#           | 22 | 23 |
-#           +----+----+
+To represent a state of the pocket cube, we will represent it by a list of length 24.
+The numbers in the list represent the faces of the cubies according to the following diagram, drawn by ChatGPT.
 
-#We also have a system for naming the cubies. For a given state, we name the 8 cubies of that state as
-#cubie currently in the Back  Top  Left:   (0,0,0)
-#                       Back  Top  Right:  (0,0,1)
-#                       Back  Down Left:   (0,1,0)
-#                       Back  Down Right:  (0,1,1)
-#                       Front Top  Left:   (1,0,0)
-#                       Front Top  Right:  (1,0,1)
-#                       Front Down Left:   (1,1,0)
-#                       Front Down Right:  (1,1,1)
+          +----+----+
+          | 0  | 1  |
+          +----+----+
+          | 2  | 3  |
++----+----+----+----+----+----+----+----+
+| 4  | 5  | 6  | 7  | 8  | 9  | 10 | 11 |
++----+----+----+----+----+----+----+----+
+| 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 |
+          +----+----+
+          | 20 | 21 |
+          +----+----+
+          | 22 | 23 |
+          +----+----+
 
+We also have a system for naming the cubies. For a given state, we name the 8 cubies of that state as
+cubie currently in the Back  Top  Left:   (0,0,0)
+                      Back  Top  Right:  (0,0,1)
+                      Back  Down Left:   (0,1,0)
+                      Back  Down Right:  (0,1,1)
+                      Front Top  Left:   (1,0,0)
+                      Front Top  Right:  (1,0,1)
+                      Front Down Left:   (1,1,0)
+                      Front Down Right:  (1,1,1)
+'''
 import numpy as np
 from heapq import heappush, heappop 
 from collections import deque
@@ -274,12 +275,17 @@ class PocketCube(object):
     def __eq__(self,other):
         return self.state==other.state
     def __hash__(self):
-        '''We need to define this dunder method in order to use pocket cubes as keys in a dictionary.
-        The implementation below appears to be the most efficient way to hash a list.'''
+        '''
+        Note:
+            We need to define this dunder method in order to use pocket cubes as keys in a dictionary.
+            The implementation below appears to be the most efficient way to hash a list.
+        '''
         return hash(tuple(self.state))
     def __lt__(self,other):
-        '''We need to be able to compare pocket cubes to put them in a heap.
-        The comparison is arbitrary. This appears to be the fastest way to do it.'''
+        '''
+        We need to be able to compare pocket cubes to put them in a heap.
+        The comparison is arbitrary. This appears to be the fastest way to do it.
+        '''
         return tuple(self.state)<tuple(other.state)
     
     #The next two functions are important.
@@ -289,18 +295,22 @@ class PocketCube(object):
         '''
         return self.state == list(range(24))
     def perform_move(self, move,mutate=False):
-        '''Expects move to be a string, like "Fp", "R2" or "L".
+        '''
+        Expects move to be a string, like "Fp", "R2" or "L".
         If mutate, mutates self by performing move and returns none. 
-        Otherwise, returns a new pocket cube whose state is that of self, after performing move.'''
+        Otherwise, returns a new pocket cube whose state is that of self, after performing move.
+        '''
         new_state = [self.state[index] for index in PocketCube.move_permutation_dict[move]]
         if mutate:
             self.state = new_state
         else:
             return PocketCube(state = new_state)
     def perform_move_sequence(self,move_sequence,mutate=True):
-        '''Expects move_sequence to be a list of moves, like ["F","B2","Rp"]
+        '''
+        Expects move_sequence to be a list of moves, like ["F","B2","Rp"]
         Either returns None and mutates self (if mutate=True)
-        Or returns a new cube and does not affect self.'''
+        Or returns a new cube and does not affect self.
+        '''
         if mutate:
             for move in move_sequence:
                 self.perform_move(move,mutate=True)
@@ -313,29 +323,36 @@ class PocketCube(object):
     #The next few functions help to extract information about the current state.
 
     def identify_cubie(self,position):
-        '''Input: a position (cubie in solved state) 
-        Returns the cubie currently in that position.'''
+        '''
+        Input: a position (cubie in solved state) 
+        Returns the cubie currently in that position.
+        '''
         faces = self.cubie_faces[position]
-        faces = [self.state[faces[0]],self.state[faces[1]],self.state[faces[2]]]
+        faces = {self.state[faces[0]],self.state[faces[1]],self.state[faces[2]]}
         for index, cubie in enumerate(PocketCube.cubie_faces):
-            if set(PocketCube.cubie_faces[cubie])==set(faces):
+            if set(PocketCube.cubie_faces[cubie])==faces:
                 return index
     def cubie_permutation(self):
-        '''Returns a list of length 8 
+        '''
+        Returns a list of length 8 
         that represents the permutation of the cubies, 
-        ignoring their orientations.'''
+        ignoring their orientations.
+        '''
         return [self.identify_cubie(position) for position in itertools.product([0,1],repeat =3)]
     
     def get_twist_of_cubie(self,position):
-        '''Expects position to be a cubie position.
+        '''
+        Expects position to be a cubie position.
         Returns 0, -1 or 1 depending on whether the cubie currently in posititon is oriented correctly, needs to be turned counter clockwise, or needs to be turned clockwise
         in order for the largest face of that cubie to be in the position of the largest face of the cubie in that position when the cube is solved.
-        A basic invariant of the cube is that the sum of the twists is always 0.'''
-        current_faces = [self.state[index] for index in self.cubie_faces[position]] #The faces that are currently on the cubie.
+        A basic invariant of the cube is that the sum of the twists is always 0.
+        '''
+        faces = self.cubie_faces[position]
+        current_faces = [self.state[index] for index in faces] #The faces that are currently on the cubie.
         largest_current_face = max(current_faces) #The largest face of the cubie currently in position.
 
-        largest_solved_face = max(self.cubie_faces[position]) #The largest face of that cubie in the solved position.
-        smallest_solved_face = min(self.cubie_faces[position])
+        largest_solved_face = max(faces) #The largest face of that cubie in the solved position.
+        smallest_solved_face = min(faces)
         if largest_solved_face==self.state.index(largest_current_face):
             return 0
         elif smallest_solved_face ==self.state.index(largest_current_face):
@@ -355,11 +372,13 @@ class PocketCube(object):
     
     #This function can help you gague how close you are to a solution.
     def correctly_placed_cubies(self, other=None, orientation: bool = False):
-        '''Input: other is a PocketCube or None.
-        Returns the number of cubies in the correct spot, relative to other. 
+        '''
+        Input: other is a PocketCube or None.
+        Returns: the number of cubies in the correct spot, relative to other. 
         Ignores the orientation if orientation==False
         By default, other=None, and we take this to mean that 
-        we are comparing to the solved cube.'''
+        we are comparing to the solved cube.
+        '''
         if other is None:
             other=PocketCube()
         correctly_placed_cubies=[]
@@ -384,6 +403,57 @@ class PocketCube(object):
             if len([ "_" for x,y in zip(c1,c2) if x!=y])==1:
                 return c1,c2
         return None
+    
+    @classmethod
+    def get_facelist_from_permutation_twists(cls,permutation:list[int],twists:list[int])->"PocketCube":
+        '''
+        Args:
+            permutation is a list of the numbers 0-7 that represents a permutation of the cubies.
+            twists is a list of +1, -1 of length 8 that represents the twist of each cubie.
+        This class method is the inverse of PocketCube.get_permutation_twist_rep().
+        '''
+        facelist = [-1] * 24 #temporarily write -1 to each entry
+        cubies = list(itertools.product([0,1],repeat =3))
+        for i, cubie_index in enumerate(permutation):
+            position = cubies[i]
+            cubie = cubies[cubie_index]
+            faces = PocketCube.cubie_faces[cubie][:]
+            twist = twists[i]
+
+            #orient the faces so that the largest face is in the correct direction.
+            if twist != 0: 
+                if PocketCube.cubie_faces_rotations[position]  == 1:
+                    target_index_for_max = 0
+                else:
+                    target_index_for_max = 1
+                if twist == 1:
+                    target_index_for_max = (target_index_for_max -1)//(-1) #swap 0 for 1 and vice versa
+
+                while faces.index(max(faces))!=target_index_for_max:
+                    faces = [faces[(j+1)%3] for j in range(3)] 
+            
+            #detect when cubies are flipped. Unflip them.
+            min_index = faces.index(min(faces))
+            max_index = faces.index(max(faces))
+            middle_index = [index for index in range(3) if index not in [min_index, max_index]][0]
+ 
+            if PocketCube.cubie_faces_rotations[cubie] == 1:
+                index_directly_clockwise_of_max_index = min_index
+            else:
+                index_directly_clockwise_of_max_index = middle_index
+
+            if PocketCube.cubie_faces_rotations[position] == 1:
+                other_index_directly_clockwise_of_max_index = (max_index+1)%3
+            else:
+                other_index_directly_clockwise_of_max_index = (max_index-1)%3
+            if index_directly_clockwise_of_max_index != other_index_directly_clockwise_of_max_index:
+                faces[min_index], faces[middle_index] = faces[middle_index],faces[min_index]
+            
+            for j, index_to_fill in enumerate(PocketCube.cubie_faces[position]):
+                facelist[index_to_fill] = faces[j]
+
+        return facelist
+
     @classmethod
     def move_sequence_cost(cls,move_sequence):
         '''Expects move_sequence to be a list of moves.
