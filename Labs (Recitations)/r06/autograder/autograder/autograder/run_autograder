@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Set up autograder files
+
+cp /autograder/submission/knapsack_solution.py /autograder/source/knapsack_solution.py
+cp /autograder/submission/edit_distance_solution.py /autograder/source/edit_distance_solution.py
+cp /autograder/submission/longest_common_substring_solution.py /autograder/source/longest_common_substring_solution.py
+
+cd /autograder/source
+
+python3 run_tests.py

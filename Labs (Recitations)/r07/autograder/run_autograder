@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# Set up autograder files
+
+cp /autograder/submission/transversal_matroid.py /autograder/source/transversal_matroid.py
+
+cd /autograder/source
+
+python3 run_tests.py
