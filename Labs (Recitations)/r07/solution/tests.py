@@ -1,23 +1,11 @@
 from unittest import TestCase
-from solution.transversal_matroid_solution import *
+from optimal_matching_solution import *
+from kruskal_solution import *
 import unittest
 from gradescope_utils.autograder_utils.decorators import weight, visibility, number
 
-#setup graph: random choice
-W_size = 5
-J_size = 15
-num_worker_neighbors = 5
-def generate_graph(W_size,J_size,num_worker_neighbors): #This function was used to generate the examples.
-    while True: #I'm picking the edges randomly until every job can be done by some worker.
-        W = ['w'+str(i) for i in range(W_size)]
-        J = ['j'+str(i) for i in range(J_size)]
-        G = {w: random.sample(J, num_worker_neighbors) for w in W} #Set the edges of G randomly based on the workers.
-        for j in J:
-            G[j]= [w for w in W if j in G[w]] #Adds the adjacencies for the jobs to make sure G is an undirected graph.
-        if len([j for j in J if len(G[j])>0])==J_size: #check that every job in J has some worker that can perform it.
-            break
-    return W,J,G
-
+#setup graph: random choice. Keep this consistent.
+random.seed(50)
 #---Example Gs: I got these from running the function generate_graph.
 
 class TestsOfStarterCode(TestCase):
@@ -28,8 +16,25 @@ class TestsOfStarterCode(TestCase):
     G_5_15_5 = {'w0': ['j10', 'j12', 'j6', 'j13', 'j9'], 'w1': ['j7', 'j6', 'j14', 'j12', 'j0'], 'w2': ['j1', 'j3', 'j2', 'j7', 'j11'], 'w3': ['j8', 'j9', 'j5', 'j7', 'j3'], 'w4': ['j0', 'j4', 'j14', 'j8', 'j10'], 'j0': ['w1', 'w4'], 'j1': ['w2'], 'j2': ['w2'], 'j3': ['w2', 'w3'], 'j4': ['w4'], 'j5': ['w3'], 'j6': ['w0', 'w1'], 'j7': ['w1', 'w2', 'w3'], 'j8': ['w3', 'w4'], 'j9': ['w0', 'w3'], 'j10': ['w0', 'w4'], 'j11': ['w2'], 'j12': ['w0', 'w1'], 'j13': ['w0'], 'j14': ['w1', 'w4']}
     example_graphs = [(5, 10, G_5_10_2, 28), (5,10, G_5_10_4, 33), (5, 15, G_5_15_5, 57)]
 
-    @weight(25)
-    def test_graphs(self):
+    @number('1')
+    @weight(10)
+    @visibility('visible')
+    def test_kruskal(self):
+        G = create_edge_weighted_graph(50)
+        print(G.edges())
+        spanning_tree_edges = kruskal_algorithm(G) #Calls your code to find the edges of a minimal spanning tree
+        spanning_tree_weight = int(sum(G[u][v]['weight'] for u,v in spanning_tree_edges))
+        
+        H=nx.Graph()
+        H.add_nodes_from(G.nodes)
+        H.add_edges_from(spanning_tree_edges) #H is a new graph whose nodes are those of G and edges are the spanning tree edges.
+        assert spanning_tree_edges == sorted(spanning_tree_edges, key= lambda e: G[e[0]][e[1]]['weight'])
+        assert nx.is_tree(H)
+        assert spanning_tree_weight == 332
+    @number('2')
+    @weight(15)
+    @visibility('visible')
+    def test_optimal_workers(self):
         for W_size,J_size,G,opt_val in type(self).example_graphs:
             W = ['w'+str(i) for i in range(W_size)]
             J = ['j'+str(i) for i in range(J_size)]

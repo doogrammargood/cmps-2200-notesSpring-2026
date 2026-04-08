@@ -6,10 +6,8 @@ def tabular_knapsack(objects:list[tuple[int,int]], W:int) -> list[list[int]]:
     Both value and weight are natural numbers.
     Expects W to be the capacity, a natural number.
     Returns a table, OPT, such that OPT[i][capacity] is the solution to
-    the 0-1 knapsack problem when on items[0:i+1] with capacity capacity."""
+    the 0-1 knapsack problem when run on items[0:i+1] with capacity capacity."""
     n = len(objects)
-    # we'll rely on indices to also represent weights, so we'll index from 1...W 
-    # in the weight dimension of the table
     OPT = [[0]*(W+1)]#Temporarily fill in the row with 0's.
     
     # initialize the first row of the table
@@ -45,3 +43,4 @@ def tabular_knapsack_objects(objects:list[tuple[int,int]], W:int) -> list[tuple[
     Note: calls tabular_knapsack
     """
     #TODO: Complete this function ~13 lines.
+    pass

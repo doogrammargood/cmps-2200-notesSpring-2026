@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Set up autograder files
+
+cp /autograder/submission/kruskal_solution.py /autograder/source/kruskal_solution.py
+cp /autograder/submission/optimal_matching_solution.py /autograder/source/optimal_matching_solution.py
+
+cd /autograder/source
+
+python3 run_tests.py
