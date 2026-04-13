@@ -7,6 +7,7 @@ import random
 import matplotlib.pyplot as plt
 import itertools
 import math
+random.seed(108)
 def create_grid(k:int, N:int, vertex_param:float = 0.9, edge_param:float = 0.9):
     """
     args:
@@ -98,6 +99,7 @@ if __name__=="__main__":
     #networkx provides a function that finds a large independent set. 
     #But independent set may not be maximum, so it is only a lower bound on the independence number.
     lower_bound = len(nx.approximation.maximum_independent_set(G))
+    print(lower_bound, len(independent_set))
     assert lower_bound <= len(independent_set)
     assert len(independent_set) == c[N-1][()]
 
