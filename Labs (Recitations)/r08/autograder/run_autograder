@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Set up autograder files
+
+cp /autograder/submission/chordal_graphs_solution.py /autograder/source/chordal_graphs_solution.py
+
+cp /autograder/submission/tree_decomposition_solution.py /autograder/source/tree_decomposition_solution.py
+
+cp /autograder/submission/independence_number_dp_solution.py /autograder/source/independence_number_dp_solution.py
+
+cd /autograder/source
+
+python3 run_tests.py
