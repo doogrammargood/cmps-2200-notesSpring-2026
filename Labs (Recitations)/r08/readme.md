@@ -37,7 +37,7 @@ This Lab involves many steps. Our goal is to calculate the independence number o
 Here are some high-level steps to achieve our goal. Each step is explained in more detail in the docstrings for the relevant functions.
 
 1. Define a "greedy search" function (sometimes called "maximum cardinality search") that repeatedly visits the next vertex with the most visited neighbors.
-2. Use this greedy search algorithm to calculate a chordal completion of ```G```, ```G_chordal``` by adding appropriate edges until the graph is chordal.
+2. Use this greedy search algorithm to calculate a chordal completion of ```G```, ```G_chordal```, by adding appropriate edges until the graph is chordal.
 3. Write an algorithm to get the tree decomposition (```TD```) of a chordal graph.
 4. Use that tree decomposition as a decomposition of $G$ (```TD2```).
 5. Calculate a topological ordering of the tree nodes of the decomposition, starting from an arbitrary root. This ordering ensures that we can fill in the dynamic programming table without referring to table entries that have not been calculated.
@@ -53,7 +53,7 @@ Here is a rundown of the files included in the lab and the role that each file p
 
 | File name | Description | Purpose | Student Task | Rename?|
 |-----------|-------------|---------|--------------|-------|
-| chordal_graphs.py| This file contains functions for recognizing chordal graphs and calculating chordal completions of graphs. | The first two steps of our algorithm involve calculating the chordal completion.| Students will need to complete some functions in this file.|Rename this file as chordal_graphs_solution.py.|
+| chordal_graphs.py| This file contains functions for recognizing chordal graphs and calculating chordal completions of graphs. | Steps $1$ and $2$ our algorithm involve calculating the chordal completion.| Students will need to complete some functions in this file.|Rename this file as chordal_graphs_solution.py.|
 |tree_decomposition.py| This file contains a class ```TreeDecomposition``` that represents the tree decomposition. | Steps $3$ and $4$ are achieved by this file. | The student will need to complete some functions in this file.| Rename this file as tree_decomposition_solution.py.|
 |helper_functions.py| This file contains two functions that we have studied before, DFS and a brute force function to calculate independent sets.| We need DFS to calculate a topological order  in step $5$ so that the dynamic programming table is completed in a correct order. We use the brute force independent set function on each bag of the tree decomposition in step $6$.| No action needed| Do not rename this file.|
 |independence_number_dp.py| This file contains the functions that calculate the independence number from the tree decomposition using dynamic programming.| This achieves the main goal of the lab in steps $7$, $8$ and $9$.| Students will need to complete some functions in this file. | Rename this file as independence_number_dp_solution.py|
